@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Formulario de Herencias - Gaurley</title>
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #f5f5f5;
+    margin: 0;
+    padding: 0;
+  }
+  body, html {
+    height: 100%;
+    color: #4C4C4C;
+  }
+  #video-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: -1;
+  }
+  .form-step {
+    display: none;
+    max-width: 500px;
+    margin: 40px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+  .form-step.active { display: block; }
+  textarea, input, select {
+    width: 95%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  .continuar, .cta-button {
+    display: block;
+    width: 100%;
+    background: #00c389;
+    color: #fff;
+    padding: 0.75rem;
+    border-radius: 5px;
+    font-weight: bold;
+    text-decoration: none;
+    margin-top: 1rem;
+    border: none;
+    cursor: pointer;
+  }
+  .continuar:hover { background: #07825d; }
+  .add-contact {
+    background: #0077cc;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px 0;
+    border: none;
+  }
+  .preview { font-size: 0.9rem; color: #555; }
+  .progress-container {
+    max-width: 500px;
+    margin: 40px auto;
+    text-align: center;
+    background-color: white;
+    padding: 30px;
+    display: none;
+  }
+  .progress-bar {
+    width: 0; height: 15px; background: #28a745; transition: width 2s ease; border-radius: 5px;
+  }
+  .progress-wrapper {
+    background: #ccc; border-radius: 5px; overflow: hidden; margin-top: 10px;
+  }
+  .card-errors { color: #e74c3c; font-size: 0.9rem; margin-top: 5px; }
+  .char-counter { font-size: 0.8rem; color: #555; float: right; margin-top: -8px; }
+  .atras { text-decoration: underline; padding: 10px; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<video id="video-bg" autoplay muted loop playsinline>
+  <source src="https://media.gaurleyabogados.es/wp-content/uploads/2024/09/headwebgaurleyabogados.mp4" type="video/mp4">
+</video>
+
+<div class="form-step active" id="step-1">
+  <h2>Cuéntanos tu caso con total transparencia</h2>
+  <p>Precedentes, Procesos, Resultados que buscas, etc</p>
+  <textarea id="caso" rows="4" required></textarea>
+  <div class="char-counter" id="char-counter">150 caracteres restantes</div>
+  <button onclick="nextStep()" class="continuar">Siguiente</button>
+</div>
+
+<div class="form-step" id="step-2">
+  <h2>Protección de Datos</h2>
+  <label style="display: flex;margin: 10px">
+    <input style="width: 50px; margin: 8px;" type="checkbox" id="consent" required>
+    <span> A partir de aquí todos los datos serán encriptados y sólo los verá Gaurley. Estoy de acuerdo.</span>
+  </label>
+  <button onclick="nextStep()" class="continuar">Siguiente</button>
+</div>
+
+<div class="form-step" id="step-3">
+  <h2>Nombres y Contacto de las Personas Claves del Caso</h2>
+  <p>Nos ayudará en el caso. No nos pondremos en contacto sin notificarte llegado el momento</p>
+  <div id="contacts-container">
+    <div class="contact-row">
+      <input type="text" placeholder="Nombre y Apellido" class="contact-name" required>
+      <input type="tel" placeholder="Teléfono" class="contact-phone" required>
+    </div>
+  </div>
+  <button type="button" class="add-contact" onclick="addContact()">+ Añadir Persona Clave</button>
+  <div>
+    <button onclick="nextStep()" class="continuar">Siguiente</button>
+  </div>
+</div>
+
+<div class="form-step" id="step-4">
+  <h2>Documentos del Caso</h2>
+  <p>Contrato, Ejecucciones en Firme, Herencia, Resguardos</p>
+  <input type="file" id="file-input" multiple required>
+  <div class="preview" id="file-preview"></div>
+  <div style="display: flex; justify-content: center; align-items: center;">
+    <a onclick="prevStep()" class="atras">Anterior</a>
+    <button onclick="nextStep()" class="continuar">Siguiente</button>
+  </div>
+</div>
+
+<div class="form-step" id="step-5">
+  <h2>Estado del Caso</h2>
+  <label>Situación Actual</label>
+  <select id="estado" required>
+    <option value="">Seleccione una opción</option>
+    <option value="En pausa">En pausa</option>
+    <option value="No quieren negociar">No quieren negociar</option>
+    <option value="En proceso">En proceso</option>
+  </select>
+  <label>¿Cuándo desea darle solución?</label>
+  <select id="urgencia" required>
+    <option value="">Seleccione una opción</option>
+    <option value="ya">Ya de forma urgente</option>
+    <option value="info">Estoy viendo información</option>
+  </select>
+  <div style="display: flex; justify-content: center; align-items: center;">
+    <a onclick="prevStep()" class="atras">Anterior</a>
+    <button onclick="submitForm()" class="continuar">Analizar Caso</button>
+  </div>
+</div>
+
+<div class="progress-container" id="progress-container">
+  <p>Analizando su caso con IA...</p>
+  <div class="progress-wrapper">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+</div>
+
+<div id="result" style="display:none; text-align:center; background:white; max-width:600px; margin:20px auto; padding:20px; border-radius:8px;">
+  <h1>✅ Su caso es viable para nuestro despacho Gaurley en Madrid</h1>
+  <h2>Llega el momento de la verdad: Tu compromiso</h2>
+  <p>Para tomar tu caso como prioritario tomaremos <strong>50€</strong> de forma simbólica.</p>
+
+  <input type="text" id="nombre" placeholder="Nombre completo" required>
+  <input type="email" id="email" placeholder="Correo electrónico" required>
+
+  <div id="card-element" class="card-element" style="margin: 10px 0;"></div>
+  <div id="card-errors" class="card-errors"></div>
+
+  <button class="cta-button" id="submit-button">HACER LA RESERVA DE 50€</button>
+
+  <img src="https://imanagers.es/recursos/proteccion.webp" style="width: 100%; margin-top:10px;">
+  <img src="https://imanagers.es/recursos/garantia.webp" style="width: 100%;">
+  <img src="https://imanagers.es/recursos/reviews.webp" style="width: 100%;">
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<script>
+  let currentStep = 1;
+  const totalSteps = 5;
+
+  function showStep(step) {
+    document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
+    document.getElementById(`step-${step}`).classList.add('active');
+  }
+
+  function nextStep() {
+    if (currentStep === 1) {
+      const texto = document.getElementById('caso').value.trim();
+      if (texto.length < 150) {
+        alert('Por favor, escribe al menos 150 caracteres sobre tu caso.');
+        return;
+      }
+    }
+    if (currentStep === 2 && !document.getElementById('consent').checked) {
+      alert('Debes aceptar el aviso de protección de datos.');
+      return;
+    }
+    if (currentStep === 3) {
+      const names = document.querySelectorAll('.contact-name');
+      const phones = document.querySelectorAll('.contact-phone');
+      for (let i = 0; i < names.length; i++) {
+        if (names[i].value.trim() === '' || phones[i].value.trim() === '') {
+          alert('Por favor completa todos los contactos con nombre y teléfono.');
+          return;
+        }
+      }
+    }
+    if (currentStep === 4) {
+      if (document.getElementById('file-input').files.length === 0) {
+        alert('Debes adjuntar al menos un documento.');
+        return;
+      }
+    }
+    if (currentStep === 5) {
+      if (document.getElementById('estado').value === '' || document.getElementById('urgencia').value === '') {
+        alert('Completa todos los campos del estado del caso.');
+        return;
+      }
+    }
+    if (currentStep < totalSteps) {
+      currentStep++;
+      showStep(currentStep);
+    }
+  }
+
+  function prevStep() {
+    if (currentStep > 1) {
+      currentStep--;
+      showStep(currentStep);
+    }
+  }
+
+  function addContact() {
+    const container = document.getElementById('contacts-container');
+    const div = document.createElement('div');
+    div.classList.add('contact-row');
+    div.innerHTML = `
+      <input type="text" placeholder="Nombre y Apellido" class="contact-name" required>
+      <input type="tel" placeholder="Teléfono" class="contact-phone" required>
+    `;
+    container.appendChild(div);
+  }
+
+  document.getElementById('file-input').addEventListener('change', function (e) {
+    const preview = document.getElementById('file-preview');
+    preview.innerHTML = '';
+    Array.from(e.target.files).forEach(file => {
+      const div = document.createElement('div');
+      div.textContent = file.name;
+      preview.appendChild(div);
+    });
+  });
+
+  function submitForm() {
+    document.querySelectorAll('.form-step').forEach(step => step.style.display = 'none');
+    const progress = document.getElementById('progress-container');
+    const progressBar = document.getElementById('progress-bar');
+    progress.style.display = 'block';
+    progressBar.style.width = '0%';
+    setTimeout(() => { progressBar.style.width = '100%'; }, 100);
+    setTimeout(() => {
+      progress.style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+      confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+    }, 3000);
+  }
+
+  const textarea = document.getElementById('caso');
+  const counter = document.getElementById('char-counter');
+  textarea.addEventListener('input', () => {
+    const remaining = 150 - textarea.value.length;
+    counter.textContent = remaining >= 0 ? `${remaining} caracteres restantes` : 'Mínimo alcanzado';
+  });
+
+  // Stripe
+  const stripe = Stripe("pk_live_51QsNOhKu0tXWuaVKuCAlJG1AHAGAISN9Onzm9eQW6PtrxQnF0F5HD79c5bFJs9wz5ZMCRtKJS8OBNKiAdNKgRrOb00RA7ogf0b");
+  const elements = stripe.elements();
+  const card = elements.create("card", {
+    style: {
+      base: {
+        color: "#333",
+        fontFamily: "'Poppins', sans-serif",
+        fontSize: "16px",
+        "::placeholder": { color: "#999" }
+      },
+      invalid: { color: "#e74c3c" }
+    }
+  });
+  card.mount("#card-element");
+
+  document.getElementById("submit-button").addEventListener("click", async (e) => {
+    e.preventDefault();
+    const nombre = document.getElementById('nombre').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const tokenError = document.getElementById("card-errors");
+
+    if (!nombre || !email) {
+      tokenError.textContent = "Por favor completa nombre y email.";
+      return;
+    }
+
+    const { token, error } = await stripe.createToken(card);
+    if (error) {
+      tokenError.textContent = error.message;
+    } else {
+      tokenError.textContent = "";
+      fetch("https://imanagers.es/recursos/pagos.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          token: token.id,
+          nombre,
+          email,
+          amount: 5000 // 50€ en céntimos
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          confetti({ particleCount: 300, spread: 80, origin: { y: 0.6 } });
+          document.getElementById("result").innerHTML = "<h1>✅ ¡Pago recibido!</h1><p>Nos pondremos en contacto contigo en breve.</p>";
+        } else {
+          tokenError.textContent = data.error || "Error al procesar el pago.";
+        }
+      })
+      .catch(() => {
+        tokenError.textContent = "Error de red.";
+      });
+    }
+  });
+</script>
+</body>
+</html>
