@@ -123,7 +123,7 @@
 
 <div class="form-step" id="step-4">
   <h2>Documentos del Caso</h2>
-  <p>Contrato, Ejecucciones en Firme, Herencia, Resguardos</p>
+  <p>Contrato, Ejecucciones en Firme, Herencia, Resguardos (Opcional)</p>
   <input type="file" id="file-input" multiple required>
   <div class="preview" id="file-preview"></div>
   <div style="display: flex; justify-content: center; align-items: center;">
@@ -210,12 +210,7 @@
         }
       }
     }
-    if (currentStep === 4) {
-      if (document.getElementById('file-input').files.length === 0) {
-        alert('Debes adjuntar al menos un documento.');
-        return;
-      }
-    }
+    
     if (currentStep === 5) {
       if (document.getElementById('estado').value === '' || document.getElementById('urgencia').value === '') {
         alert('Completa todos los campos del estado del caso.');
