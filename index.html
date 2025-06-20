@@ -81,6 +81,70 @@
   .card-errors { color: #e74c3c; font-size: 0.9rem; margin-top: 5px; }
   .char-counter { font-size: 0.8rem; color: #555; float: right; margin-top: -8px; }
   .atras { text-decoration: underline; padding: 10px; cursor: pointer; }
+
+
+  .gaurley-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 50px;
+  gap: 50px;
+}
+
+.gaurley-image img {
+  max-width: 400px;
+  height: auto;
+  border-radius: 5px;
+}
+
+.gaurley-content {
+  max-width: 700px;
+}
+
+.gaurley-title {
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #333;
+}
+
+.gaurley-title .gaurley-bold {
+  font-weight: 700;
+}
+
+.gaurley-title .gaurley-highlight {
+  color: #bfa162; 
+  font-weight: 700;
+}
+
+.gaurley-paragraph {
+  font-size: 18px;
+  line-height: 1.6;
+  margin-top: 20px;
+}
+
+.gaurley-paragraph strong {
+  font-weight: 600;
+}
+
+@media (max-width: 992px) {
+  .gaurley-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .gaurley-image img {
+    max-width: 80%;
+  }
+
+  .gaurley-title {
+    font-size: 36px;
+  }
+
+  .gaurley-paragraph {
+    font-size: 16px;
+  }
+}
 </style>
 </head>
 <body>
@@ -163,7 +227,7 @@
 <div id="result" style="display:none; text-align:center; background:white; max-width:600px; margin:20px auto; padding:20px; border-radius:8px;">
   <h1>✅ Su caso es viable para nuestro despacho Gaurley en Madrid</h1>
   <h2>Llega el momento de la verdad: Tu compromiso</h2>
-  <p>Para tomar tu caso como prioritario tomaremos <strong>50€</strong> de forma simbólica.</p>
+  <p>Para tomar tu caso como prioritario tomaremos <strong>1€</strong> de forma simbólica.</p>
 
   <input type="text" id="nombre" placeholder="Nombre completo" required>
   <input type="email" id="email" placeholder="Correo electrónico" required>
@@ -171,12 +235,31 @@
   <div id="card-element" class="card-element" style="margin: 10px 0;"></div>
   <div id="card-errors" class="card-errors"></div>
 
-  <button class="cta-button" id="submit-button">HACER LA RESERVA DE 50€</button>
+  <button class="cta-button" id="submit-button">HACER LA RESERVA DE 1€ CON EL LETRADO JAVIER OCHOA</button>
 
   <img src="https://imanagers.es/recursos/proteccion.webp" style="width: 100%; margin-top:10px;">
   <img src="https://imanagers.es/recursos/garantia.webp" style="width: 100%;">
   <img src="https://imanagers.es/recursos/reviews.webp" style="width: 100%;">
 </div>
+
+   <div class="gaurley-container">
+    <div class="gaurley-image">
+      <img src="https://media.gaurleyabogados.es/wp-content/uploads/2024/09/Javier-Garcia-Ochoa-Blanco.png" alt="Abogado Gaurley"/>
+    </div>
+    <div class="gaurley-content">
+      <h1 class="gaurley-title">
+        Abogados Expertos <br>
+        en <span class="gaurley-bold">Madrid</span> con una <br>
+        Metodología de <span class="gaurley-highlight">Éxito</span>
+      </h1>
+      <p class="gaurley-paragraph">
+        En <strong>Gaurley Abogados</strong>, como <strong>Abogados Expertos en Madrid</strong>, hemos diseñado una <strong>metodología de trabajo que garantiza resultados óptimos</strong>. Nuestro enfoque se basa en la búsqueda constante de la excelencia, la adaptabilidad a las necesidades de nuestros clientes y un compromiso inquebrantable con el éxito en cada caso.
+      </p>
+      <p class="gaurley-paragraph">
+        Este proceso en cuatro pasos refleja nuestra dedicación a <strong>ofrecer soluciones legales personalizadas</strong>, con un <strong>trato cercano, ágil y enfocado en obtener los mejores resultados para cada cliente</strong>.
+      </p>
+    </div>
+  </div>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 <script>
@@ -346,7 +429,7 @@
         token: token.id,
         nombre,
         email,
-        amount: 5000 // 50€ en céntimos
+        amount: 100 // 1€ en céntimos
       })
     });
 
