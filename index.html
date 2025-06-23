@@ -118,13 +118,26 @@
         alert('Por favor, escriba al menos 150 caracteres sobre su caso.');
         return;
       }
+      // Guardar en localStorage
+      localStorage.setItem('caso', texto);
     }
+
+    if (currentStep === 2) {
+      const archivos = Array.from(document.getElementById('file-input').files).map(file => file.name);
+      localStorage.setItem('archivos', JSON.stringify(archivos));
+    }
+
     if (currentStep === 3) {
-      if (document.getElementById('estado').value === '' || document.getElementById('urgencia').value === '') {
+      const estado = document.getElementById('estado').value;
+      const urgencia = document.getElementById('urgencia').value;
+      if (estado === '' || urgencia === '') {
         alert('Por favor, complete todos los campos del estado del caso.');
         return;
       }
+      localStorage.setItem('estado', estado);
+      localStorage.setItem('urgencia', urgencia);
     }
+
     if (currentStep < totalSteps) {
       currentStep++;
       showStep(currentStep);
@@ -168,11 +181,11 @@
       return;
     }
 
-    // ✅ Recopilar el resto de datos
-    const caso = document.getElementById('caso').value.trim();
-    const archivos = Array.from(document.getElementById('file-input').files).map(file => file.name);
-    const estado = document.getElementById('estado').value;
-    const urgencia = document.getElementById('urgencia').value;
+    // ✅ Recuperar del localStorage
+    const caso = localStorage.getItem('caso') || '';
+    const archivos = JSON.parse(localStorage.getItem('archivos') || '[]');
+    const estado = localStorage.getItem('estado') || '';
+    const urgencia = localStorage.getItem('urgencia') || '';
 
     const datos = {
       nombre,
@@ -206,8 +219,9 @@
     })
     .then(() => {
       // ✅ Marcar conversión en Facebook Pixel
-fbq('track', 'CompleteRegistration');
-      // Zapier siempre acepta no-cors, no devuelve respuesta, así que asumimos éxito
+      fbq('track', 'CompleteRegistration');
+
+      // ✅ Mostrar resultado
       setTimeout(() => {
         progress.style.display = 'none';
         document.getElementById('result').style.display = 'block';
@@ -221,7 +235,7 @@ fbq('track', 'CompleteRegistration');
     });
   }
 
-  // ✅ Este bloque va FUERA de submitForm
+  // ✅ Contador de caracteres fuera de submitForm
   const textarea = document.getElementById('caso');
   const counter = document.getElementById('char-counter');
   textarea.addEventListener('input', () => {
