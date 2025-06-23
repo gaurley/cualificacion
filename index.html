@@ -208,8 +208,10 @@
     // ✅ Preparar datos como parámetros limpios UTF-8
 const params = new URLSearchParams();
 for (const key in datos) {
-  params.append(key, datos[key]);
-});
+  const value = Array.isArray(datos[key]) ? datos[key].join(', ') : datos[key];
+  params.append(key, value);
+}
+
 
 // ✅ Enviar a Zapier usando no-cors + form-urlencoded
 fetch("https://hooks.zapier.com/hooks/catch/20702921/uojogoe/", {
