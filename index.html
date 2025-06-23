@@ -205,35 +205,37 @@
     progressBar.style.width = '0%';
     setTimeout(() => { progressBar.style.width = '100%'; }, 100);
 
-    // ✅ Preparar datos como URI component
-    const payload = encodeURIComponent(JSON.stringify(datos));
+    // ✅ Preparar datos como parámetros limpios UTF-8
+const params = new URLSearchParams();
+for (const key in datos) {
+  params.append(key, datos[key]);
+});
 
-    // ✅ Enviar a Zapier usando no-cors + text/plain
-    fetch("https://hooks.zapier.com/hooks/catch/20702921/uojogoe/", {
-      method: "POST",
-      mode: "no-cors",
-      headers: {
-        "Content-Type": "text/plain"
-      },
-      body: payload
-    })
-    .then(() => {
-      // ✅ Marcar conversión en Facebook Pixel
-      fbq('track', 'CompleteRegistration');
+// ✅ Enviar a Zapier usando no-cors + form-urlencoded
+fetch("https://hooks.zapier.com/hooks/catch/20702921/uojogoe/", {
+  method: "POST",
+  mode: "no-cors",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+  },
+  body: params.toString()
+})
+.then(() => {
+  // ✅ Track Facebook Pixel
+  fbq('track', 'CompleteRegistration');
 
-      // ✅ Mostrar resultado
-      setTimeout(() => {
-        progress.style.display = 'none';
-        document.getElementById('result').style.display = 'block';
-      }, 3000);
-    })
-    .catch(err => {
-      alert("Hubo un error al enviar la información. Intente de nuevo.");
-      console.error(err);
-      progress.style.display = 'none';
-      showStep(totalSteps);
-    });
-  }
+  setTimeout(() => {
+    progress.style.display = 'none';
+    document.getElementById('result').style.display = 'block';
+  }, 3000);
+})
+.catch(err => {
+  alert("Hubo un error al enviar la información. Intente de nuevo.");
+  console.error(err);
+  progress.style.display = 'none';
+  showStep(totalSteps);
+});
+
 
   // ✅ Contador de caracteres fuera de submitForm
   const textarea = document.getElementById('caso');
