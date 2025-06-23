@@ -1,5 +1,3 @@
-<!-- ✅ HTML MODIFICADO SEGÚN TUS INSTRUCCIONES -->
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -118,7 +116,6 @@
         alert('Por favor, escriba al menos 150 caracteres sobre su caso.');
         return;
       }
-      // Guardar en localStorage
       localStorage.setItem('caso', texto);
     }
 
@@ -181,7 +178,6 @@
       return;
     }
 
-    // ✅ Recuperar del localStorage
     const caso = localStorage.getItem('caso') || '';
     const archivos = JSON.parse(localStorage.getItem('archivos') || '[]');
     const estado = localStorage.getItem('estado') || '';
@@ -197,7 +193,6 @@
       fechaHora
     };
 
-    // ✅ Mostrar barra de progreso
     document.querySelectorAll('.form-step').forEach(step => step.style.display = 'none');
     const progress = document.getElementById('progress-container');
     const progressBar = document.getElementById('progress-bar');
@@ -205,41 +200,36 @@
     progressBar.style.width = '0%';
     setTimeout(() => { progressBar.style.width = '100%'; }, 100);
 
-    // ✅ Preparar datos como parámetros limpios UTF-8
-const params = new URLSearchParams();
-for (const key in datos) {
-  const value = Array.isArray(datos[key]) ? datos[key].join(', ') : datos[key];
-  params.append(key, value);
-}
+    const params = new URLSearchParams();
+    for (const key in datos) {
+      const value = Array.isArray(datos[key]) ? datos[key].join(', ') : datos[key];
+      params.append(key, value);
+    }
 
+    fetch("https://hooks.zapier.com/hooks/catch/20702921/uojogoe/", {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+      },
+      body: params.toString()
+    })
+    .then(() => {
+      fbq('track', 'CompleteRegistration');
+      setTimeout(() => {
+        progress.style.display = 'none';
+        document.getElementById('result').style.display = 'block';
+      }, 3000);
+    })
+    .catch(err => {
+      alert("Hubo un error al enviar la información. Intente de nuevo.");
+      console.error(err);
+      progress.style.display = 'none';
+      showStep(totalSteps);
+    });
+  }
 
-// ✅ Enviar a Zapier usando no-cors + form-urlencoded
-fetch("https://hooks.zapier.com/hooks/catch/20702921/uojogoe/", {
-  method: "POST",
-  mode: "no-cors",
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-  },
-  body: params.toString()
-})
-.then(() => {
-  // ✅ Track Facebook Pixel
-  fbq('track', 'CompleteRegistration');
-
-  setTimeout(() => {
-    progress.style.display = 'none';
-    document.getElementById('result').style.display = 'block';
-  }, 3000);
-})
-.catch(err => {
-  alert("Hubo un error al enviar la información. Intente de nuevo.");
-  console.error(err);
-  progress.style.display = 'none';
-  showStep(totalSteps);
-});
-
-
-  // ✅ Contador de caracteres fuera de submitForm
+  // ✅ ESTE VA FUERA
   const textarea = document.getElementById('caso');
   const counter = document.getElementById('char-counter');
   textarea.addEventListener('input', () => {
