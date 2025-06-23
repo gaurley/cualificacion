@@ -141,88 +141,76 @@
     });
   });
 
- function submitForm() {
-  const nombre = document.getElementById('nombre').value.trim();
-  const telefono = document.getElementById('telefono').value.trim();
-  const fechaHora = document.getElementById('fecha-hora').value;
-  const compromiso = document.getElementById('compromiso').checked;
+  function submitForm() {
+    const nombre = document.getElementById('nombre').value.trim();
+    const telefono = document.getElementById('telefono').value.trim();
+    const fechaHora = document.getElementById('fecha-hora').value;
+    const compromiso = document.getElementById('compromiso').checked;
 
-  if (!nombre || !telefono) {
-    alert('Por favor, complete nombre y teléfono.');
-    return;
-  }
+    if (!nombre || !telefono) {
+      alert('Por favor, complete nombre y teléfono.');
+      return;
+    }
 
-  if (!fechaHora) {
-    alert('Por favor, seleccione fecha y hora.');
-    return;
-  }
+    if (!fechaHora) {
+      alert('Por favor, seleccione fecha y hora.');
+      return;
+    }
 
-  const hora = new Date(fechaHora).getHours();
-  if (hora < 11 || hora >= 13) {
-    alert('Seleccione una hora entre 11:00 y 13:00.');
-    return;
-  }
+    const hora = new Date(fechaHora).getHours();
+    if (hora < 11 || hora >= 13) {
+      alert('Seleccione una hora entre 11:00 y 13:00.');
+      return;
+    }
 
-  if (!compromiso) {
-    alert('Debe comprometerse a asistir.');
-    return;
-  }
+    if (!compromiso) {
+      alert('Debe comprometerse a asistir.');
+      return;
+    }
 
-  // ✅ Recopilar el resto de datos
-  const caso = document.getElementById('caso').value.trim();
-  const archivos = Array.from(document.getElementById('file-input').files).map(file => file.name);
-  const estado = document.getElementById('estado').value;
-  const urgencia = document.getElementById('urgencia').value;
+    // ✅ Recopilar el resto de datos
+    const caso = document.getElementById('caso').value.trim();
+    const archivos = Array.from(document.getElementById('file-input').files).map(file => file.name);
+    const estado = document.getElementById('estado').value;
+    const urgencia = document.getElementById('urgencia').value;
 
-  const datos = {
-    nombre,
-    telefono,
-    caso,
-    archivos,
-    estado,
-    urgencia,
-    fechaHora
-  };
+    const datos = {
+      nombre,
+      telefono,
+      caso,
+      archivos,
+      estado,
+      urgencia,
+      fechaHora
+    };
 
-  // ✅ Mostrar barra de progreso
-  document.querySelectorAll('.form-step').forEach(step => step.style.display = 'none');
-  const progress = document.getElementById('progress-container');
-  const progressBar = document.getElementById('progress-bar');
-  progress.style.display = 'block';
-  progressBar.style.width = '0%';
-  setTimeout(() => { progressBar.style.width = '100%'; }, 100);
-
-  // ✅ Enviar a Zapier
-  fetch("https://hooks.zapier.com/hooks/catch/20702921/uojogoe/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(datos)
-  })
-  .then(res => {
-    if (!res.ok) throw new Error("Error al enviar a Zapier");
-    setTimeout(() => {
-      progress.style.display = 'none';
-      document.getElementById('result').style.display = 'block';
-    }, 3000);
-  })
-  .catch(err => {
-    alert("Hubo un error al enviar la información. Intente de nuevo.");
-    console.error(err);
-    progress.style.display = 'none';
-    showStep(totalSteps); // Regresar al último paso
-  });
-}
-
+    // ✅ Mostrar barra de progreso
     document.querySelectorAll('.form-step').forEach(step => step.style.display = 'none');
     const progress = document.getElementById('progress-container');
     const progressBar = document.getElementById('progress-bar');
     progress.style.display = 'block';
     progressBar.style.width = '0%';
     setTimeout(() => { progressBar.style.width = '100%'; }, 100);
-    setTimeout(() => {
+
+    // ✅ Enviar a Zapier
+    fetch("https://hooks.zapier.com/hooks/catch/20702921/uojogoe/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(datos)
+    })
+    .then(res => {
+      if (!res.ok) throw new Error("Error al enviar a Zapier");
+      setTimeout(() => {
+        progress.style.display = 'none';
+        document.getElementById('result').style.display = 'block';
+      }, 3000);
+    })
+    .catch(err => {
+      alert("Hubo un error al enviar la información. Intente de nuevo.");
+      console.error(err);
       progress.style.display = 'none';
-      document.getElementById('result').style.display = 'block';
-    }, 3000);
+      showStep(totalSteps); // Regresar al último paso
+    });
   }
 
   const textarea = document.getElementById('caso');
@@ -232,6 +220,7 @@
     counter.textContent = remaining >= 0 ? `${remaining} caracteres restantes` : 'Mínimo alcanzado';
   });
 </script>
+
 <script>
     (function(h,o,t,j,a,r){
         h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
